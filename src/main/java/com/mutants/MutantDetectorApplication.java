@@ -1,4 +1,4 @@
-package com.mutants.MutantDetector;
+package com.mutants;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
