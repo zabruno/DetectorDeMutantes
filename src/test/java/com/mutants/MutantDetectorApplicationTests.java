@@ -1,4 +1,4 @@
-package com.mutants.MutantDetector;
+package com.mutants;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
