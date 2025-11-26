@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface DnaRecordRepository extends JpaRepository<DnaRecord, Long> {
     Optional<DnaRecord> findByDnaHash(String dnaHash);
+
+    long countByMutant(boolean mutant);
 }

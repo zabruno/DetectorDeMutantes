@@ -24,7 +24,7 @@ public class MutantService {
 
         String hash = hashDna(dna);
 
-        // If already exists, return stored result
+        // Si ya existe en BD, devuelve dato guardado
         return repository.findByDnaHash(hash)
                 .map(DnaRecord::isMutant)
                 .orElseGet(() -> {
