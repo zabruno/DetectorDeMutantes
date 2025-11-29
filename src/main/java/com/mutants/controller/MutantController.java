@@ -4,6 +4,7 @@ import com.mutants.service.MutantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,8 @@ public class MutantController {
             @ApiResponse(responseCode = "403", description = "El ADN no pertenece a un mutante"),
             @ApiResponse(responseCode = "400", description = "El formato del ADN es inválido")
     })
-    public ResponseEntity<?> isMutant(@RequestBody DnaRequest request) {
+    //CORRECCION: Bean Validation
+    public ResponseEntity<?> isMutant(@Valid @RequestBody DnaRequest request) {
         boolean result = service.isMutant(request.getDna());
         return result ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
     }

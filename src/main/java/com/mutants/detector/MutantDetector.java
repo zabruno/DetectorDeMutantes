@@ -2,99 +2,75 @@ package com.mutants.detector;
 
 import org.springframework.stereotype.Component;
 
+
+//CORRECCION: Algoritmo optimizado, no se itera varias veces
 @Component
 public class MutantDetector {
 
-    private static final int SEQ = 4;
+    private static final int SEQ_LEN = 4;
 
     public boolean isMutant(String[] dna) {
-        char[][] m = buildMatrix(dna);
-        int n = m.length;
-        int found = 0;
-
-        // Horizontal
-        found += checkHorizontal(m, n);
-        if (found > 1) return true;
-
-        // Vertical
-        found += checkVertical(m, n);
-        if (found > 1) return true;
-
-        // Diagonal (↘)
-        found += checkDiagonalDown(m, n);
-        if (found > 1) return true;
-
-        // Diagonal (↗)
-        found += checkDiagonalUp(m, n);
-        return found > 1;
-    }
-
-    private char[][] buildMatrix(String[] dna) {
         int n = dna.length;
-        char[][] m = new char[n][n];
+        // Optimization: Trabajamos con char[][] para acceso más rápido por índice
+        char[][] matrix = new char[n][n];
         for (int i = 0; i < n; i++) {
-            m[i] = dna[i].toCharArray();
+            matrix[i] = dna[i].toCharArray();
         }
-        return m;
-    }
 
-    private int checkHorizontal(char[][] m, int n) {
-        int count = 0;
-        for (int row = 0; row < n; row++) {
-            for (int col = 0; col <= n - SEQ; col++) {
-                char c = m[row][col];
-                if (c == m[row][col+1] &&
-                        c == m[row][col+2] &&
-                        c == m[row][col+3]) {
-                    count++;
+        int mutantSequences = 0;
+
+        // ÚNICA PASADA: Recorremos la matriz una sola vez
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                // Optimización: Si ya no queda espacio en ninguna dirección, saltamos
+                char current = matrix[i][j];
+
+                // 1. HORIZONTAL (Hacia la derecha) -> (i, j+1)...
+                // Solo chequeamos si cabe la secuencia (j + 3 < n)
+                if (j + SEQ_LEN <= n) {
+                    if (current == matrix[i][j+1] &&
+                            current == matrix[i][j+2] &&
+                            current == matrix[i][j+3]) {
+                        mutantSequences++;
+                        if (mutantSequences > 1) return true; // Terminación temprana
+                    }
+                }
+
+                // 2. VERTICAL (Hacia abajo) -> (i+1, j)...
+                // Solo chequeamos si cabe hacia abajo (i + 3 < n)
+                if (i + SEQ_LEN <= n) {
+                    if (current == matrix[i+1][j] &&
+                            current == matrix[i+2][j] &&
+                            current == matrix[i+3][j]) {
+                        mutantSequences++;
+                        if (mutantSequences > 1) return true;
+                    }
+                }
+
+                // 3. DIAGONAL PRINCIPAL (Hacia abajo-derecha) ↘
+                if (i + SEQ_LEN <= n && j + SEQ_LEN <= n) {
+                    if (current == matrix[i+1][j+1] &&
+                            current == matrix[i+2][j+2] &&
+                            current == matrix[i+3][j+3]) {
+                        mutantSequences++;
+                        if (mutantSequences > 1) return true;
+                    }
+                }
+
+                // 4. DIAGONAL SECUNDARIA (Hacia abajo-izquierda) ↙
+                // Nota: Reemplaza a tu "checkDiagonalUp". Miramos hacia "atrás" en columnas pero "abajo" en filas.
+                if (i + SEQ_LEN <= n && j - SEQ_LEN >= -1) {
+                    if (current == matrix[i+1][j-1] &&
+                            current == matrix[i+2][j-2] &&
+                            current == matrix[i+3][j-3]) {
+                        mutantSequences++;
+                        if (mutantSequences > 1) return true;
+                    }
                 }
             }
         }
-        return count;
-    }
 
-    private int checkVertical(char[][] m, int n) {
-        int count = 0;
-        for (int col = 0; col < n; col++) {
-            for (int row = 0; row <= n - SEQ; row++) {
-                char c = m[row][col];
-                if (c == m[row+1][col] &&
-                        c == m[row+2][col] &&
-                        c == m[row+3][col]) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-    private int checkDiagonalDown(char[][] m, int n) {
-        int count = 0;
-        for (int row = 0; row <= n - SEQ; row++) {
-            for (int col = 0; col <= n - SEQ; col++) {
-                char c = m[row][col];
-                if (c == m[row+1][col+1] &&
-                        c == m[row+2][col+2] &&
-                        c == m[row+3][col+3]) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-    private int checkDiagonalUp(char[][] m, int n) {
-        int count = 0;
-        for (int row = SEQ - 1; row < n; row++) {
-            for (int col = 0; col <= n - SEQ; col++) {
-                char c = m[row][col];
-                if (c == m[row-1][col+1] &&
-                        c == m[row-2][col+2] &&
-                        c == m[row-3][col+3]) {
-                    count++;
-                }
-            }
-        }
-        return count;
+        return false; // Si terminamos el ciclo y no hay más de 1 secuencia
     }
 }

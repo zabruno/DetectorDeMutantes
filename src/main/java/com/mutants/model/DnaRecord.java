@@ -1,11 +1,20 @@
 package com.mutants.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dna_records", uniqueConstraints = {
         @UniqueConstraint(columnNames = "dnaHash")
 })
+
+//CORRECCION: Se aplica lombok
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DnaRecord {
 
     @Id
@@ -18,23 +27,13 @@ public class DnaRecord {
     @Column(nullable = false)
     private boolean mutant;
 
-    public DnaRecord() {
-    }
+    //Se agrega createdAt
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public DnaRecord(String dnaHash, boolean mutant) {
         this.dnaHash = dnaHash;
         this.mutant = mutant;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDnaHash() {
-        return dnaHash;
-    }
-
-    public boolean isMutant() {
-        return mutant;
+        this.createdAt = LocalDateTime.now();
     }
 }

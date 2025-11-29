@@ -1,37 +1,60 @@
 package com.mutants.detector;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
+//CORRECCION: Tests para el algoritmo de detección
+// Test Unitario puro (sin Spring Context) para máxima velocidad y aislamiento
 public class MutantDetectorTest {
 
     private final MutantDetector detector = new MutantDetector();
 
     @Test
-    void shouldDetectMutant() {
+    void shouldDetectMutantHorizontal() {
+        // Caso con más de 1 secuencia horizontal
         String[] dna = {
-                "ATGCGA",
-                "CAGTGC",
-                "TTATGT",
-                "AGAAGG",
-                "CCCCTA",
-                "TCACTG"
+                "AAAA", "CCCC", "TCAG", "GGTC"
         };
-
-        assertTrue(detector.isMutant(dna));
+        Assertions.assertTrue(detector.isMutant(dna));
     }
 
     @Test
-    void shouldDetectHuman() {
+    void shouldDetectMutantVertical() {
+        // Caso con más de 1 secuencia vertical
         String[] dna = {
-                "ATGCGA",
-                "CAGTGC",
-                "TTATTT",
-                "AGACGG",
-                "GCGTCA",
-                "TCACTG"
+                "ATCG", "ATCG", "ATCG", "ATCG"
         };
+        Assertions.assertTrue(detector.isMutant(dna));
+    }
 
-        assertFalse(detector.isMutant(dna));
+    @Test
+    void shouldDetectMutantDiagonal() {
+        // Magneto Example
+        String[] dna = {
+                "ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"
+        };
+        Assertions.assertTrue(detector.isMutant(dna));
+    }
+
+    @Test
+    void shouldDetectMutantInverseDiagonal() {
+        // Diagonal secundaria (Abajo-Izquierda)
+        String[] dna = {
+                "AAAT", "AATA", "ATAA", "TAAA" // Secuencia de 'A' inversa
+        };
+        // Nota: Necesitamos >1 secuencia para ser mutante.
+        // Agregamos una horizontal extra para cumplir la condición >1
+        String[] dnaMutant = {
+                "AAAG", "AAGA", "AGAA", "GGGG"
+        };
+        Assertions.assertTrue(detector.isMutant(dnaMutant));
+    }
+
+    @Test
+    void shouldReturnFalseForHuman() {
+        String[] dna = {
+                "AAAT", "CCCG", "TTAC", "GGTA"
+        };
+        Assertions.assertFalse(detector.isMutant(dna));
     }
 }
