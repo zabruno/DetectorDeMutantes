@@ -17,7 +17,8 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-Test.http
+TestLH.http
+TestOR.http
 
 ### IntelliJ IDEA ###
 .idea

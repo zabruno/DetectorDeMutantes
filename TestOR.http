@@ -1,0 +1,36 @@
+POST https://detectordemutantes.onrender.com/mutant/
+Content-Type: application/json
+
+{
+  "dna": ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+}
+###
+POST https://detectordemutantes.onrender.com/mutant/
+Content-Type: application/json
+
+{
+  "dna": ["ATGCGA","CAGTGC","TTATTT","AGACGG","GCGTCA","TCACTG"]
+}
+###
+POST https://detectordemutantes.onrender.com/mutant/
+Content-Type: application/json
+
+{
+  "dna": ["AAAA", "CCCC", "TCAG", "GGTZ"]
+}
+###
+POST https://detectordemutantes.onrender.com/mutant/
+Content-Type: application/json
+
+{
+  "dna": ["AAA", "GCG"]
+}
+###
+POST https://detectordemutantes.onrender.com/mutant/
+Content-Type: application/json
+
+{
+  "dna": []
+}
+###
+GET https://detectordemutantes.onrender.com/stats/
