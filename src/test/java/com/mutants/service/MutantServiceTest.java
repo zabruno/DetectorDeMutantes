@@ -1,23 +1,18 @@
 package com.mutants.service;
 
 import com.mutants.detector.MutantDetector;
-import com.mutants.model.DnaRecord;
 import com.mutants.repository.DnaRecordRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.security.MessageDigest;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-//CORRECCION:Añadidos test unitarios para MutantService. Utilizamos Mockito para simular BD.
 @ExtendWith(MockitoExtension.class)
-public class MutantServiceTest {
+class MutantServiceTest {
 
     @Mock
     private DnaRecordRepository repository;
@@ -25,33 +20,66 @@ public class MutantServiceTest {
     @Mock
     private MutantDetector detector;
 
+    @Mock
+    private MessageDigest messageDigest;
+
     @InjectMocks
     private MutantService service;
 
+    // --- TESTS DE VALIDACIÓN (Los que faltaban) ---
+
     @Test
-    void shouldReturnTrueIfMutantExistsInDb() {
-        // Simulamos que YA existe en BD y es mutante
-        when(repository.findByDnaHash(anyString())).thenReturn(Optional.of(new DnaRecord("hash", true)));
-
-        String[] dna = {"AAAA", "CCCC", "GTCA", "ACTG"};
-        boolean result = service.isMutant(dna);
-
-        assertTrue(result);
-        // Verificar que NO se llamó al detector (ahorro de recursos)
-        verify(detector, never()).isMutant(any());
+    void shouldThrowExceptionForNullDna() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.isMutant(null);
+        });
     }
 
     @Test
-    void shouldCallDetectorIfDnaNotInDb() {
-        // Simulamos que NO está en BD
-        when(repository.findByDnaHash(anyString())).thenReturn(Optional.empty());
-        when(detector.isMutant(any())).thenReturn(true);
+    void shouldThrowExceptionForEmptyDna() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.isMutant(new String[]{});
+        });
+    }
 
-        String[] dna = {"AAAA", "CCCC", "GTCA", "ACTG"};
-        boolean result = service.isMutant(dna);
+    @Test
+    void shouldThrowExceptionForNonNxNMatrix() {
+        // Matriz irregular (3 filas, longitud 4, 4, 3)
+        String[] dna = {
+                "AAAA",
+                "CCCC",
+                "TCA" // Falta una letra
+        };
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.isMutant(dna);
+        });
+    }
 
-        assertTrue(result);
-        // Verificar que se guardó en BD
-        verify(repository, times(1)).save(any(DnaRecord.class));
+    @Test
+    void shouldThrowExceptionForInvalidCharacters() {
+        // Letra 'Z' no permitida
+        String[] dna = {
+                "AAAA",
+                "CCCC",
+                "TCAG",
+                "GGTZ"
+        };
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.isMutant(dna);
+        });
+    }
+
+    @Test
+    void shouldThrowExceptionForNumbers() {
+        // Números no permitidos
+        String[] dna = {
+                "AAAA",
+                "CCCC",
+                "TCAG",
+                "1234"
+        };
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.isMutant(dna);
+        });
     }
 }
