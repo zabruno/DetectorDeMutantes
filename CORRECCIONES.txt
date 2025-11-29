@@ -1,0 +1,24 @@
+Correcciones:
+
+1. Algoritmo y Lógica (C1):
+- Refactorización de MutantDetector para realizar la búsqueda en una sola pasada
+- Implementación de validaciones robustas para matriz NxN y caracteres válidos.
+- Normalización de entrada (toUpperCase) para garantizar consistencia en el Hashing.
+
+2. Arquitectura (C2):
+- Creación de capa de configuración explícita (SwaggerConfig).
+- Implementación de GlobalExceptionHandler para manejo centralizado de errores.
+- Integración de Bean Validation (@Valid, @NotNull) en DTOs y Controladores.
+- Uso de Lombok para reducir boilerplate en Entidades y DTOs.
+
+3. Testing (C3):
+- Creación de suite de tests unitarios para Algoritmo (MutantDetectorTest) y Servicio (MutantServiceTest).
+- Creación de tests de integración para Controladores (MutantControllerTest, StatsControllerTest).
+- Cobertura de código aumentada > 80% cubriendo casos de borde y errores.
+
+4. Persistencia (C5):
+- Agregado campo 'createdAt' a la entidad DnaRecord para trazabilidad.
+---
+Se corrigieron dependencias, hay que hacer otro deploy en render ya que no toma los cambios
+---
+Se añadieron Tests en MutantDetectorTest y en MutantServiceTest
